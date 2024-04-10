@@ -1,16 +1,32 @@
 import React, { useState } from 'react';
 import Footer from './Footer';
+import '../App.css';
+import PhotoDetails from './PhotoDetails';
 
 function ProductList({ product, addToCart }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredProduct, setFilteredProduct] = useState([]);
   const [searched, setSearched] = useState(false);
+  const [disabledButtons, setDisabledButtons] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const handleSearch = () => {
-    // Filter the product based on the search query
     const filtered = product.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
     setFilteredProduct(filtered);
     setSearched(true);
+  };
+
+  const handleAddToCart = (item, index) => {
+    setDisabledButtons(prevState => [...prevState, index]);
+    addToCart(item);
+  };
+
+  const handleProductClick = (item) => {
+    setSelectedProduct(item);
+  };
+
+  const handleCloseDescription = () => {
+    setSelectedProduct(null);
   };
 
   return (
@@ -26,26 +42,42 @@ function ProductList({ product, addToCart }) {
       </div>
       <div className="product-container">
         {searched ? (
-          // Render the filtered product list if search button is clicked
           filteredProduct.map((item, index) => (
             <div key={index} className="product-item">
-              <img  src={item.url} alt={item.name} />
+              <img src={item.url} alt={item.name} onClick={() => handleProductClick(item)} />
               <p>{item.name}</p>
-              <button onClick={()=> addToCart(item)}>Add To Cart</button>
+              {/* <Link to="/photo-details">
+              <button>View Details</button>
+            </Link> */}
+              <button 
+                onClick={()=> handleAddToCart(item, index)} 
+                disabled={disabledButtons.includes(index)}>
+                Add To Cart
+              </button>
             </div>
           ))
         ) : (
-          // Render the original product list if search button is not clicked
           product.map((item, index) => (
             <div key={index} className="product-item">
-              <img  src={item.url} alt={item.name} />
+              <img src={item.url} alt={item.name} onClick={() => handleProductClick(item)} />
               <p>{item.name}</p>
-              <button onClick={()=> addToCart(item)}>Add To Cart</button>
+              <button 
+                onClick={()=> handleAddToCart(item, index)} 
+                disabled={disabledButtons.includes(index)}>
+                Add To Cart
+              </button>
             </div>
           ))
         )}
       </div>
       <Footer />
+      {selectedProduct && (
+        <PhotoDetails 
+          product={selectedProduct} 
+          onClose={handleCloseDescription} 
+          addToCart={addToCart}
+        />
+      )}
     </div>
   );
 }

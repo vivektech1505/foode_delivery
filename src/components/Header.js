@@ -6,7 +6,7 @@ function Header(props) {
     <div>
         <div className='navBar'>
                 <div onClick={()=> props.handleShow(false)}>Home</div>
-                <div onClick={()=> props.handleShow(true)} style={{color : "blue"}}>Favorites</div>
+                <div onClick={()=> props.handleShow(true)} style={{color : "white"}}>Favorites</div>
                 {props.count > 0 && <span style={{ color: "blue" }}>({props.count})</span>}
             </div>
     </div>
